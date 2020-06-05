@@ -1,27 +1,45 @@
-import React, {Component} from 'react';
-import './App.css';
-import axios from 'axios';
-import SearchBar from './Component/search';
-import ImageList from './Component/imageList';
-class App extends Component {
-  state={images:[]};
+import React from 'react';
+import Toolbar from './component/Toolbar/Toolbar';
+import SideDrawer from './component/SideDrawer/SideDrawer';
+import BackDrop from './component/BackDrop/BackDrop';
+import Home from './component/Home/Home';
+import BarchartDispaly from './component/Barchart/BarcharDispaly';
+import Map from './component/Map/Map';
+import {BrowserRouter as Router,Route} from 'react-router-dom';
+class App extends React.Component {
 
-  //get data from api
-   onSearchSubmit=async (term)=>{
-   const response= await axios.get('https://api.unsplash.com/search/photos',{
-        params:{query:term},
-        headers:{
-          Authorization:'Client-ID MYr-qbwv0_Shy3yGlCOQQjNS7W9zix3nwOBiIV9QIdI'
-        }
-      });
-this.setState({images:response.data.results});
-  }
+    state={
+      SideDrawerOpen:false
+    };
+
+  drawerToggeleClickHandele =() =>{
+    this.setState((prevState) =>{
+      return{SideDrawerOpen:!prevState.SideDrawerOpen};
+    });
+  };
+  backDropClickHandler = () =>{
+    this.setState({SideDrawerOpen:false});
+  };
   render(){
+    let bcakDeop;
+    if(this.state.SideDrawerOpen){
+      bcakDeop=<BackDrop backDropClickHandler={this.backDropClickHandler} />;
+    }
   return (
-    <div className="ui container" style={{marginTop:'10px'}}>
-    <SearchBar onSubmit={this.onSearchSubmit}/>
-    <ImageList images={this.state.images} />
+    <Router>
+      <div style={{height:'100%'}}>
+     
+      <Toolbar drawerToggeleClickHandele={this.drawerToggeleClickHandele} />
+      <SideDrawer show={this.state.SideDrawerOpen} />
+      {bcakDeop}
+      <main style={{marginTop:'64px'}}>
+      <Route path="/" exact component={Home}/>
+      <Route path="/map" component={Map}/>
+      <Route path="/bar" component={BarchartDispaly}/>
+      </main>
+      
     </div>
+    </Router>
   );
   }
 }
